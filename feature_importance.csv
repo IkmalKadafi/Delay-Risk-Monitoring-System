@@ -1,8 +1,0 @@
-Feature,Gain,Category,Relative_Importance
-created_hour_cos,8.488805770874023,External (Time),100.0
-courier_avg_speed_7d,7.101738929748535,Controllable (Training/Selection),83.66004737810519
-order_volume_last_1h,6.741063594818115,External (Demand),79.4112125635788
-courier_late_rate_7d,6.615994453430176,Controllable (Performance Mgmt),77.9378705557187
-created_hour_sin,5.975379943847656,External (Time),70.3912906612825
-delivery_distance_km,5.570498466491699,Semi-Controllable (Assignment),65.62169776112276
-is_weekend,0.28393903374671936,External (Time),3.344864300240485
