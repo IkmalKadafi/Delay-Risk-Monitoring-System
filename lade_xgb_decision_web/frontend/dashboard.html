@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">Entropiata Logistics</a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/dataset.html">Dataset</a>
+                <a href="/dashboard.html" class="active">Ops Dashboard</a>
+                <a href="/simulation.html">Simulation</a>
+                <a href="/executive.html">Executive View</a>
+            </nav>
+        </header>
+
+        <h1>Operations Control Center</h1>
+        <p>Real-time SLA Risk Monitoring & Distribution</p>
+
+        <div class="grid">
+            <!-- Key Metrics -->
+            <div class="glass-card">
+                <div class="stat-label">Total Active Deliveries</div>
+                <div class="stat-value" id="total-deliveries">Loading...</div>
+                <div class="text-secondary">Simulated Batch</div>
+            </div>
+            <div class="glass-card">
+                <div class="stat-label">Predicted Breaches</div>
+                <div class="stat-value text-danger" id="predicted-breaches">Loading...</div>
+                <div class="text-secondary">High Probability (> 0.5)</div>
+            </div>
+            <div class="glass-card">
+                <div class="stat-label">Breach Rate</div>
+                <div class="stat-value text-warning" id="breach-rate">Loading...</div>
+                <div class="text-secondary">% of Total Volume</div>
+            </div>
+            <div class="glass-card">
+                <div class="stat-label">Total Risk Exposure</div>
+                <div class="stat-value text-danger" id="risk-exposure">Loading...</div>
+                <div class="text-secondary">Expected Financial Loss (Rp)</div>
+            </div>
+        </div>
+
+        <div class="grid" style="margin-top: 2rem; grid-template-columns: 2fr 1fr;">
+            <!-- Charts -->
+            <div class="glass-card">
+                <h3>SLA Risk Distribution</h3>
+                <canvas id="riskChart"></canvas>
+            </div>
+            <div class="glass-card">
+                <h3>Action Required</h3>
+                <ul id="action-list" style="list-style: none; padding: 0;">
+                    <!-- Injected via JS -->
+                    <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">Loading actions...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

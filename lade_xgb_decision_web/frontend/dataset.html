@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Explorer - LaDe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">Entropiata Logistics</a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/dataset.html" class="active">Dataset</a>
+                <a href="/dashboard.html">Ops Dashboard</a>
+                <a href="/simulation.html">Simulation</a>
+                <a href="/executive.html">Executive View</a>
+            </nav>
+        </header>
+
+        <h1>LaDe Dataset Explorer</h1>
+        <p>Real-world Last-mile Delivery data (Sample). Source: HuggingFace (Cainiao-AI).</p>
+
+        <div class="glass-card">
+            <div style="overflow-x: auto;">
+                <table id="data-table">
+                    <thead>
+                        <!-- Headers injected via JS -->
+                    </thead>
+                    <tbody>
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/dataset.js"></script>
+</body>
+
+</html>

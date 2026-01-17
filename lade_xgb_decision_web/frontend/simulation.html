@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What-If Simulation - LaDe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">Entropiata Logistics</a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/dataset.html">Dataset</a>
+                <a href="/dashboard.html">Ops Dashboard</a>
+                <a href="/simulation.html" class="active">Simulation</a>
+                <a href="/executive.html">Executive View</a>
+            </nav>
+        </header>
+
+        <h1>What-If Simulation Engine</h1>
+        <p>Adjust parameters to view real-time financial impact and operational trade-offs.</p>
+
+        <div class="grid" style="grid-template-columns: 1fr 2fr;">
+            <!-- Controls -->
+            <div class="glass-card">
+                <h3>Simulation Parameters</h3>
+
+                <div class="input-group">
+                    <label>Risk Threshold: <span id="val-threshold" class="text-accent">0.50</span></label>
+                    <input type="range" id="param-threshold" min="0.0" max="1.0" step="0.01" value="0.50">
+                </div>
+
+                <div class="input-group">
+                    <label>Cost of Missed SLA (FN) (Rp)</label>
+                    <input type="number" id="param-cost-fn" value="50000"
+                        style="width: 100%; padding: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px;">
+                </div>
+
+                <div class="input-group">
+                    <label>Cost of Intervention (FP) (Rp)</label>
+                    <input type="number" id="param-cost-fp" value="10000"
+                        style="width: 100%; padding: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px;">
+                </div>
+
+                <button id="btn-run" class="btn" style="width: 100%; text-align: center; cursor: pointer;">Run
+                    Simulation</button>
+            </div>
+
+            <!-- Results -->
+            <div class="glass-card">
+                <h3>Financial Impact Analysis</h3>
+                <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                    <div>
+                        <div class="stat-label">Total Risk Cost</div>
+                        <div class="stat-value text-danger" id="sim-total-cost">-</div>
+                    </div>
+                    <div>
+                        <div class="stat-label">Savings vs Baseline</div>
+                        <div class="stat-value text-success" id="sim-savings">-</div>
+                    </div>
+                </div>
+                <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 20px;">
+                    <div>
+                        <div class="stat-label">Intervention Volume</div>
+                        <div class="stat-value" id="sim-interventions">-</div>
+                    </div>
+                    <div>
+                        <div class="stat-label">Missed SLAs</div>
+                        <div class="stat-value text-warning" id="sim-missed">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid" style="margin-top: 2rem; grid-template-columns: 1fr 1fr;">
+            <div class="glass-card">
+                <h3>Cost Efficiency Curve</h3>
+                <canvas id="costCurveChart"></canvas>
+            </div>
+            <div class="glass-card">
+                <h3>Intervention Rate vs Threshold</h3>
+                <canvas id="tradeoffChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="js/simulation.js"></script>
+</body>
+
+</html>

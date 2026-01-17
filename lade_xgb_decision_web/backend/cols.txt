@@ -1,0 +1,13 @@
+ds
+postman_id
+gps_time
+lat
+lng
+
+Sample:
+ds                                         318
+postman_id    01890dd2fdc077b8deb7d8c120bf9c9f
+gps_time                        03-18 00:01:04
+lat                             2375270.941943
+lng                             1566730.575129
+Name: 0, dtype: object
