@@ -51,7 +51,7 @@ def analyze_importance():
     
     # Extract Importance (Gain = improvement in accuracy brought by a feature)
     # Using 'gain' is generally better than 'weight' (frequency) for interpretation
-    importance = model.booster.get_score(importance_type='gain')
+    importance = model.get_booster().get_score(importance_type='gain')
     
     # Map raw feature names (f0, f1...) to actual names if needed
     # (XGBoost sklearn API usually handles this, but robust mapping below)
