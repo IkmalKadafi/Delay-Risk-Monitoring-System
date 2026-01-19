@@ -72,7 +72,7 @@ def train_pipeline():
     
     # 6. Save Model
     # model.save_model(MODEL_PATH)
-    import joblib
+    # Joblib is already imported globally
     joblib.dump(model, MODEL_PATH)
     logger.info(f"Model saved to {MODEL_PATH}")
 

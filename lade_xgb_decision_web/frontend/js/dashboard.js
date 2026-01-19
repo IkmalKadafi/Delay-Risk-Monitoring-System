@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                labels: ['Risiko Rendah', 'Risiko Sedang', 'Risiko Tinggi'],
                 datasets: [{
-                    label: '# of Deliveries',
+                    label: 'Jumlah Pengiriman',
                     data: [
                         stats.risk_distribution.low,
                         stats.risk_distribution.medium,
@@ -78,18 +78,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             actionList.innerHTML += `
                 <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center;">
                     <span style="width: 10px; height: 10px; background: #ef4444; border-radius: 50%; margin-right: 10px;"></span>
-                    <span><strong>Escalate:</strong> ${highRisk} deliveries require immediate intervention.</span>
+                    <span><strong>Eskalasi:</strong> ${highRisk} pengiriman memerlukan intervensi segera.</span>
                 </li>`;
         }
         if (mediumRisk > 0) {
             actionList.innerHTML += `
                 <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center;">
                     <span style="width: 10px; height: 10px; background: #eab308; border-radius: 50%; margin-right: 10px;"></span>
-                    <span><strong>Prioritize:</strong> ${mediumRisk} deliveries at risk. Monitor closely.</span>
+                    <span><strong>Prioritaskan:</strong> ${mediumRisk} pengiriman berisiko. Monitor dengan ketat.</span>
                 </li>`;
         }
         if (highRisk === 0 && mediumRisk === 0) {
-            actionList.innerHTML = '<li style="padding: 10px;">All systems nominal. No immediate actions required.</li>';
+            actionList.innerHTML = '<li style="padding: 10px;">Semua sistem normal. Tidak ada tindakan segera yang diperlukan.</li>';
         }
 
     } catch (err) {

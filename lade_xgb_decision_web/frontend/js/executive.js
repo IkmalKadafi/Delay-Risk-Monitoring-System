@@ -48,12 +48,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Strategic Text
         const textEl = document.getElementById('strategic-text');
         textEl.innerHTML = `
-            Current risk exposure is <strong>${cur.format(impact.total_cost)}</strong>. 
-            The system successfully identified <strong>${impact.tp_count}</strong> critical breaches, preventing potential penalties.
+            Eksposur risiko saat ini adalah <strong>${cur.format(impact.total_cost)}</strong>. 
+            Sistem berhasil mengidentifikasi <strong>${impact.tp_count}</strong> pelanggaran kritis, mencegah potensi penalti.
             <br>
             <br>
-            Intervention precision is at <strong>${(precision * 100).toFixed(1)}%</strong>, meaning most actions taken were necessary.
-            Recommendation: Maintain current threshold or tighten slightly to reduce FN if budget allows.
+            Presisi intervensi berada pada <strong>${(precision * 100).toFixed(1)}%</strong>, artinya sebagian besar tindakan yang diambil memang diperlukan.
+            Rekomendasi: Pertahankan ambang batas saat ini atau perketat sedikit untuk mengurangi FN jika anggaran memungkinkan.
         `;
 
     } catch (err) {

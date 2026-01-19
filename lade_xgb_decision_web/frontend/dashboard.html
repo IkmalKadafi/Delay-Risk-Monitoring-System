@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operations Dashboard</title>
+    <title>Dashboard Operasi</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,54 +13,54 @@
 <body>
     <div class="container">
         <header>
-            <a href="/" class="logo">Entropiata Logistics</a>
+            <a href="/" class="logo">Sistem Monitoring Risiko Keterlambatan</a>
             <nav>
-                <a href="/">Home</a>
+                <a href="/">Beranda</a>
                 <a href="/dataset.html">Dataset</a>
-                <a href="/dashboard.html" class="active">Ops Dashboard</a>
-                <a href="/simulation.html">Simulation</a>
-                <a href="/executive.html">Executive View</a>
+                <a href="/dashboard.html" class="active">Dashboard Operasi</a>
+                <a href="/simulation.html">Simulasi</a>
+                <a href="/executive.html">Tampilan Eksekutif</a>
             </nav>
         </header>
 
-        <h1>Operations Control Center</h1>
-        <p>Real-time SLA Risk Monitoring & Distribution</p>
+        <h1>Pusat Kontrol Operasi</h1>
+        <p>Monitoring Risiko SLA & Distribusi Real-time</p>
 
         <div class="grid">
             <!-- Key Metrics -->
             <div class="glass-card">
-                <div class="stat-label">Total Active Deliveries</div>
-                <div class="stat-value" id="total-deliveries">Loading...</div>
-                <div class="text-secondary">Simulated Batch</div>
+                <div class="stat-label">Total Pengiriman Aktif</div>
+                <div class="stat-value" id="total-deliveries">Memuat...</div>
+                <div class="text-secondary">Batch Simulasi</div>
             </div>
             <div class="glass-card">
-                <div class="stat-label">Predicted Breaches</div>
-                <div class="stat-value text-danger" id="predicted-breaches">Loading...</div>
-                <div class="text-secondary">High Probability (> 0.5)</div>
+                <div class="stat-label">Prediksi Pelanggaran</div>
+                <div class="stat-value text-danger" id="predicted-breaches">Memuat...</div>
+                <div class="text-secondary">Probabilitas Tinggi (> 0.5)</div>
             </div>
             <div class="glass-card">
-                <div class="stat-label">Breach Rate</div>
-                <div class="stat-value text-warning" id="breach-rate">Loading...</div>
-                <div class="text-secondary">% of Total Volume</div>
+                <div class="stat-label">Tingkat Pelanggaran</div>
+                <div class="stat-value text-warning" id="breach-rate">Memuat...</div>
+                <div class="text-secondary">% dari Total Volume</div>
             </div>
             <div class="glass-card">
-                <div class="stat-label">Total Risk Exposure</div>
-                <div class="stat-value text-danger" id="risk-exposure">Loading...</div>
-                <div class="text-secondary">Expected Financial Loss (Rp)</div>
+                <div class="stat-label">Total Eksposur Risiko</div>
+                <div class="stat-value text-danger" id="risk-exposure">Memuat...</div>
+                <div class="text-secondary">Perkiraan Kerugian Finansial (Rp)</div>
             </div>
         </div>
 
         <div class="grid" style="margin-top: 2rem; grid-template-columns: 2fr 1fr;">
             <!-- Charts -->
             <div class="glass-card">
-                <h3>SLA Risk Distribution</h3>
+                <h3>Distribusi Risiko SLA</h3>
                 <canvas id="riskChart"></canvas>
             </div>
             <div class="glass-card">
-                <h3>Action Required</h3>
+                <h3>Tindakan yang Diperlukan</h3>
                 <ul id="action-list" style="list-style: none; padding: 0;">
                     <!-- Injected via JS -->
-                    <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">Loading actions...</li>
+                    <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">Memuat tindakan...</li>
                 </ul>
             </div>
         </div>

@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Total Expected Cost (Rp)',
+                    label: 'Total Biaya yang Diharapkan (Rp)',
                     data: costs,
                     borderColor: '#38bdf8',
                     backgroundColor: 'rgba(56, 189, 248, 0.2)',
@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 scales: {
-                    x: { title: { display: true, text: 'Threshold' } },
-                    y: { title: { display: true, text: 'Cost (Rp)' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                    x: { title: { display: true, text: 'Ambang Batas' } },
+                    y: { title: { display: true, text: 'Biaya (Rp)' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                 }
             }
         });
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Intervention Rate (%)',
+                    label: 'Tingkat Intervensi (%)',
                     data: interventions,
                     borderColor: '#eab308',
                     tension: 0.4
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 scales: {
-                    x: { title: { display: true, text: 'Threshold' } },
+                    x: { title: { display: true, text: 'Ambang Batas' } },
                     y: { title: { display: true, text: '%' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                 }
             }

@@ -1,6 +1,7 @@
 
 import os
 import pandas as pd
+import numpy as np
 from datasets import load_dataset
 import logging
 
@@ -11,88 +12,140 @@ logger = logging.getLogger(__name__)
 CACHE_DIR = "data_cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-def load_lade_data(subset="default", split="train", sample_size=None, cache_path="data_cache/lade_data.parquet"):
+def haversine_np(lon1, lat1, lon2, lat2):
     """
-    Loads the LaDe dataset.
-    Args:
-        subset (str): "default" seems to be the only available config.
-        split (str): Dataset split to load (e.g., 'train', 'validation', 'test').
-        sample_size (int, optional): If provided, take a random sample of this size.
-        cache_path (str): Path to cache the dataframe as parquet.
-    Returns:
-        pd.DataFrame: The loaded dataframe.
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees) using NumPy.
+    All inputs must be of same length.
+    """
+    lon1, lat1, lon2, lat2 = map(np.radians, [lon1, lat1, lon2, lat2])
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = np.sin(dlat/2.0)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2.0)**2
+    c = 2 * np.arcsin(np.sqrt(a))
+    km = 6367 * c
+    return km
+
+def process_gps_to_orders(df):
+    """
+    Transforms raw GPS trajectory data into 'Order' records.
+    Assumes columns: ['ds', 'postman_id', 'gps_time', 'lat', 'lng']
+    """
+    logger.info("Transforming raw GPS trajectories to Order/Route records...")
+    
+    # 1. Sort
+    df = df.sort_values(by=['postman_id', 'ds', 'gps_time'])
+    
+    # 2. Group by Courier & Day to form a "Route"
+    # For this dataset, we'll treat a full day's route as one "Job/Order" 
+    # (or you could split by idle time, but Daily Performance is a good unit).
+    
+    grouped = df.groupby(['postman_id', 'ds'])
+    
+    processed_rows = []
+    
+    for (pid, ds), group in grouped:
+        if len(group) < 2:
+            continue
+            
+        # Extract basic info
+        start_time = group['gps_time'].min()
+        end_time = group['gps_time'].max()
+        
+        # Calculate Total Distance
+        # Shift distinct points to handle stationary periods
+        lats = group['lat'].values
+        lngs = group['lng'].values
+        
+        # Vectorized distance calc
+        dist_km = np.sum(haversine_np(lngs[:-1], lats[:-1], lngs[1:], lats[1:]))
+        
+        # Meta-data
+        record = {
+            'courier_id': int(pid) if not pd.isna(pid) else 0,
+            'ds': ds,
+            'accept_time': pd.to_datetime(start_time, unit='s'),
+            'finish_time': pd.to_datetime(end_time, unit='s'),
+            'distance': dist_km,
+            # Synthetic features where missing
+            'vehicle_type': 'Motorcycle', 
+            'weather': 'Cloudy' # Placeholder
+        }
+        processed_rows.append(record)
+        
+    orders_df = pd.DataFrame(processed_rows)
+    
+    if orders_df.empty:
+        logger.warning("Transformation resulted in empty dataframe!")
+        return pd.DataFrame()
+
+    # 3. Add SLA Logic (Promise Time)
+    # Realistic assumption: 5 mins/km + 30 mins fixed
+    avg_speed_min_per_km = 5.0 
+    orders_df['promise_duration'] = orders_df['distance'] * avg_speed_min_per_km + 30
+    orders_df['promise_time'] = orders_df['accept_time'] + pd.to_timedelta(orders_df['promise_duration'], unit='m')
+    
+    logger.info(f"Generated {len(orders_df)} order records from trajectories.")
+    return orders_df
+
+def load_lade_data(subset="default", split="train", sample_size=None, cache_path="data_cache/lade_orders.parquet"):
+    """
+    Loads LaDe data, forcing a fresh download/transform if needed to get real orders.
     """
     
+    # Check cache first
+    # IMPORTANT: We changed the cache filename to 'lade_orders' to distinguish from raw
     if os.path.exists(cache_path):
-        logger.info(f"Loading data from cache: {cache_path}")
+        logger.info(f"Loading transformed orders from cache: {cache_path}")
         df = pd.read_parquet(cache_path)
         if sample_size and len(df) > sample_size:
-            logger.info(f"Sampling {sample_size} rows from cached data...")
             df = df.sample(n=sample_size, random_state=42)
         return df
 
-    if os.path.exists(cache_path):
-        logger.info(f"Loading data from cache: {cache_path}")
-        df = pd.read_parquet(cache_path)
-        if sample_size and len(df) > sample_size:
-            logger.info(f"Sampling {sample_size} rows from cached data...")
-            df = df.sample(n=sample_size, random_state=42)
-        return df
-
-    logger.info(f"Downloading {subset} dataset from HuggingFace (split={split}) with streaming=True...")
-    logger.info(f"Downloading {subset} dataset from HuggingFace (split={split}) with streaming=True...")
+    logger.info(f"Downloading {subset} dataset from HuggingFace...")
     try:
-        # User suggested config: "Cainiao-AI/LaDe", split="train", streaming=True
-        # We ignore 'subset' var if it causes issues, or try to use it if valid. 
-        # The user didn't specify subset in their snippet, effectively relying on default.
-        # Let's try the user's exact snippet pattern.
+        # We need ENOUGH rows to form routes. 20k rows might form ~50-100 routes.
+        # Let's pull more to be safe -> 50,000
+        download_limit = 100000 
+        
         dataset = load_dataset("Cainiao-AI/LaDe", split=split, streaming=True, trust_remote_code=True)
         
-        # Take a sample (e.g., 20k rows)
-        logger.info("Iterating stream to collect samples...")
         data_list = []
-        max_rows = 20000 if not sample_size else sample_size
-        
         for i, item in enumerate(dataset):
             data_list.append(item)
-            if i >= max_rows:
+            if i >= download_limit:
                 break
                 
-        df = pd.DataFrame(data_list)
-        logger.info(f"Collected {len(df)} rows from stream.")
+        raw_df = pd.DataFrame(data_list)
+        logger.info(f"Downloaded {len(raw_df)} raw GPS points.")
         
-        logger.info(f"Saving data to cache: {cache_path}")
-        df.to_parquet(cache_path, index=False)
-        return df
+        # TRANSFORM
+        orders_df = process_gps_to_orders(raw_df)
+        
+        if orders_df.empty:
+             # Fallback if transformation fails (e.g. data is not trajectory)
+             raise ValueError("Transformation yielded 0 orders.")
+             
+        # Save cache
+        logger.info(f"Saving transformed data to cache: {cache_path}")
+        orders_df.to_parquet(cache_path, index=False)
+        
+        if sample_size and len(orders_df) > sample_size:
+             return orders_df.sample(n=sample_size, random_state=42)
+             
+        return orders_df
         
     except Exception as e:
-        logger.error(f"Error loading dataset: {e}")
-        logger.warning("FALLBACK: Generating synthetic LaDe-like data to ensure system functionality.")
-        
-        # Synthetic Data Generation mimicking LaDe schema
-        import numpy as np
-        rows = 10000
-        df = pd.DataFrame({
-            'courier_id': np.random.randint(1000, 2000, rows),
-            'accept_time': pd.date_range(start='2024-01-01', periods=rows, freq='T'),
-            'distance': np.random.exponential(scale=5.0, size=rows), # km
-            'weather': np.random.choice(['Sunny', 'Rainy', 'Cloudy'], rows),
-            'vehicle_type': np.random.choice(['Motorcycle', 'Van'], rows)
-        })
-        # Add delay logic
-        # SLA: 60 mins
-        df['promise_time'] = df['accept_time'] + pd.Timedelta(minutes=60)
-        # Actual: accept + travel (distance * 5 min/km) + random delay
-        travel_time = df['distance'] * 5 + np.random.normal(loc=10, scale=15, size=rows)
-        df['finish_time'] = df['accept_time'] + pd.to_timedelta(travel_time, unit='m')
-        
-        # Cache it
-        df.to_parquet(cache_path, index=False)
-        return df
+        logger.error(f"Error loading/transforming dataset: {e}")
+        # Last resort fallback if real data fails completely
+        # But we really want to avoid this now.
+        logger.warning("Critical failure in real data load. Returning empty to signal issue.")
+        return pd.DataFrame()
 
 if __name__ == "__main__":
-    # Test loader
-    df = load_lade_data(sample_size=1000)
-    print("Data Loaded Successfully.")
+    df = load_lade_data(sample_size=10)
+    print("Transformed Data Sample:")
     print(df.head())
-    print(df.columns)
+    print("Columns:", df.columns)
